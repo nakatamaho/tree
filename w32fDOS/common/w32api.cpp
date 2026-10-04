@@ -191,6 +191,8 @@ BOOL GetConsoleScreenBufferInfo(HANDLE hCon, PCONSOLE_SCREEN_BUFFER_INFO pConScr
   */
   unsigned short cols=80, rows=25;
 
+#ifndef PC88VA
+  /* The PC-88VA has no PC BIOS data area; its DOS console is 80x25. */
   unsigned short far * bios_cols = (unsigned short far *)MK_FP(0x40,0x4A);
   unsigned short far * bios_size = (unsigned short far *)MK_FP(0x40,0x4C);
 
@@ -201,6 +203,7 @@ BOOL GetConsoleScreenBufferInfo(HANDLE hCon, PCONSOLE_SCREEN_BUFFER_INFO pConScr
       rows = *bios_size / cols / 2;
   }
   /* else use default values of 25x80 screen */
+#endif
 
 
   if (pConScrBufInfo)

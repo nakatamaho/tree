@@ -171,7 +171,13 @@ const unichar UCBAR_HORZBAR_STR[] = { 0x2514, 0x2500, 0x2500, 0x2500 };
 
 /* Global variables */
 short showFiles = SHOWFILESOFF;
+#ifdef PC88VA
+/* The PC-88VA character set has JIS X 0201 katakana where code page 437
+   has box-drawing characters, so default to the /A ASCII tree. */
+short charSet = ASCIICHARS;
+#else
 short charSet = EXTENDEDCHARS;
+#endif
 short pause = NOPAUSE;
 
 short dspAll = 0;  /* if nonzero includes HIDDEN & SYSTEM files in output */
