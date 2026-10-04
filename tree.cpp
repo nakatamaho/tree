@@ -102,7 +102,12 @@ int LFN_Enable_Flag = LFN_ENABLE;
 
 #else                   /* DOS specific         */
 /* Win32 File compability stuff */
+#ifdef __WATCOMC__
+/* Open Watcom: case-sensitive cross builds need the exact file name. */
+#include "w32fdos.h"
+#else
 #include "w32fDOS.h"
+#endif
 #include "wincon.h"
 
 /* currently no mapping required */
@@ -117,6 +122,8 @@ const WORD UDOTDOT[] = { 0x2E, 0x2E, 0x00 };  //   L".."
 
 /* Define getdrive so it returns current drive, 0=A,1=B,...           */
 #if defined _MSC_VER || defined __MSC /* MS Visual C/C++ 5 */
+#define getdrive() (_getdrive() - 1)
+#elif defined __WATCOMC__ /* Open Watcom: _getdrive() is 1-based, A=1 */
 #define getdrive() (_getdrive() - 1)
 #else /* #ifdef __BORLANDC__ || __TURBOC__ */
 #define getdrive() getdisk()

@@ -53,10 +53,18 @@ DWORD GetFileAttributes(const char *pathname)
     s.ds = FP_SEG(pathname);          /* get Segment of our filename pointer  */
 
     r.x.cflag = 1;                    /* should be set when unsupported ***   */
+#ifdef __WATCOMC__
+    /* Open Watcom intdosx clears the carry before the call; a DOS without
+       LFN support may leave it clear and return AX=7100h. Treat that as
+       the carry set by Borland's STC below. */
+    intdosx(&r, &r, &s);
+    if (r.x.ax == 0x7100) r.x.cflag = 1;
+#else
     asm stc;                          /* but clib usually ignores on entry    */
 
     /* Actually perform the call, carry should be set on error or unuspported */
     intdosx(&r, &r, &s);         /* Clib function to invoke DOS int21h call   */
+#endif
 
     if (!r.x.cflag)              /* if carry not set then cx has desired info */
       return (DWORD)r.x.cx;
